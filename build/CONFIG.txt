@@ -1,0 +1,4 @@
+localhost
+brgydb2
+root
+
