@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -41,6 +42,7 @@ public class SQLConnect {
     private ResultSet rs;
     private ArrayList<String> details;
     private String ip, db, uname, pword;
+    private boolean disp = true;
 
     public SQLConnect() {
 
@@ -56,7 +58,13 @@ public class SQLConnect {
 
         } catch (ClassNotFoundException | SQLException ex) {
             System.out.println("Error in constructor: " + ex);
+            JOptionPane.showMessageDialog(null, "Database Connection Error. Please click \"Options\" to configure.");
+            disp = false;
         }
+    }
+    
+    public boolean toDispose(){
+        return disp;
     }
 
     public void closeCon() {

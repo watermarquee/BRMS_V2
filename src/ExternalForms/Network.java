@@ -5,6 +5,7 @@
  */
 package ExternalForms;
 
+import ExternalNonFormClasses.SQLConnect;
 import brms_v2.LogIn;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,9 +26,8 @@ import javax.swing.JOptionPane;
  */
 public class Network extends javax.swing.JDialog {
 
-    /**
-     * Creates new form Network
-     */
+    SQLConnect connect;
+    
     public Network(LogIn log) {
         super(log);
         initComponents();
@@ -116,6 +116,14 @@ public class Network extends javax.swing.JDialog {
             } catch (IOException ex) {
                 Logger.getLogger(Network.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+    }
+    
+    public void check(){
+        connect = new SQLConnect();
+        if(connect.toDispose()){
+            JOptionPane.showMessageDialog(this, "Configuration successful!");
+            dispose();
         }
     }
 
@@ -282,7 +290,7 @@ public class Network extends javax.swing.JDialog {
                 bw.newLine();
 
                 bw.close();
-                dispose();
+                //dispose();
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Network.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -297,6 +305,8 @@ public class Network extends javax.swing.JDialog {
         } else {
             JOptionPane.showMessageDialog(this, "All Forms Must Not Be Empty!");
         }
+        
+        check();
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed

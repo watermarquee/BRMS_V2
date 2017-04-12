@@ -1,0 +1,7 @@
+UPDATE:
+-search for "view citizens and transactions" dynamic
+-claim date can only be >= today
+-calendar returns to date today
+-year dropdown in calendar non-editable
+-options -> view forms -> form editor -> vairable count field erased
+-options -> view officials -> prev and next buttons prompts when clicked while disabled

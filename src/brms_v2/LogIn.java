@@ -146,6 +146,11 @@ public final class LogIn extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         userField.setText("Username");
+        userField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userFieldActionPerformed(evt);
+            }
+        });
 
         logInButton.setText("Log In");
         logInButton.addActionListener(new java.awt.event.ActionListener() {
@@ -224,17 +229,17 @@ public final class LogIn extends javax.swing.JFrame {
                     }
 
                     if (!proceed) {
-                        JOptionPane.showMessageDialog(null, "Username and Password Invalid!");
+                        JOptionPane.showMessageDialog(null, "Username and/or Password Invalid!");
                     }
 
                 } catch (SQLException ex) {
                     Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Please Enter a Username and Password!");
+                JOptionPane.showMessageDialog(null, "Username and/or Password Invalid!");
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Please Enter a Username and Password!");
+            JOptionPane.showMessageDialog(null, "Username and/or Password Invalid!");
         }
 
     }//GEN-LAST:event_logInButtonActionPerformed
@@ -242,6 +247,10 @@ public final class LogIn extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
        network.callClass();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void userFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_userFieldActionPerformed
 
     public void enableMainHideThis() {
         main.setEnabled(true);

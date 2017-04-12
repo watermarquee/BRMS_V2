@@ -33,7 +33,6 @@
  * The pioneering role of Dennis Ritchie and Bjarne Stroustrup, of AT&T, for
  * inventing predecessor languages C and C++ is also gratefully acknowledged.
  */
-
 package ExternalNonFormClasses;
 
 import brms_v2.Main;
@@ -47,8 +46,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-
-public class BRMS_Calendar {
+public final class BRMS_Calendar {
 
     /**
      * A Calendar object used throughout
@@ -63,15 +61,13 @@ public class BRMS_Calendar {
      * Currently-interesting month and day
      */
     protected int mm,
-
-    /**
-     * Currently-interesting month and day
-     */
-
-    /**
-     * Currently-interesting month and day
-     */
-    dd;
+            /**
+             * Currently-interesting month and day
+             */
+            /**
+             * Currently-interesting month and day
+             */
+            dd;
     /**
      * The number of day squares to leave blank at the start of this month
      */
@@ -90,9 +86,9 @@ public class BRMS_Calendar {
     private final JButton days[];
     private final JComboBox monthChoice, yearChoice;
     private final JPanel panel;
-    
+
     private String daySelected;
-    
+
     Main nm;
 
     public BRMS_Calendar(Main nm, JPanel jP, JButton newJ[], JComboBox jC1, JComboBox jC2) {
@@ -108,26 +104,39 @@ public class BRMS_Calendar {
         recompute();
     }
 
+    public void reset() {
+        setYYMMDD(thisYear, thisMonth,
+                calendar.get(Calendar.DAY_OF_MONTH));
+        nm.getCalendarDaySelected(String.valueOf(dd));
+        monthChoice.setSelectedIndex(thisMonth);
+        yearChoice.setSelectedItem(thisYear);
+        System.out.println("TODAY: "+calendar.get(Calendar.DAY_OF_MONTH));
+        System.out.println("MC INDEX: "+monthChoice.getSelectedIndex());
+        System.out.println("YC ITEM: "+yearChoice.getSelectedItem());
+        buildGUI();
+        recompute();
+    }
+
     private void setYYMMDD(int year, int month, int today) {
         yy = year;
         mm = month;
         dd = today;
     }
-    
-    private void dateSet(String i){
+
+    private void dateSet(String i) {
         daySelected = i;
-        System.out.println("Day: "+daySelected);
+        System.out.println("Day: " + daySelected);
     }
-    
-    public String getDaySelected(){
+
+    public String getDaySelected() {
         return daySelected;
     }
-    
-    public String getMonthSelected(){
+
+    public String getMonthSelected() {
         return months[mm];
     }
-    
-    public String getYearSelected(){
+
+    public String getYearSelected() {
         return String.valueOf(yy);
     }
 
@@ -146,7 +155,7 @@ public class BRMS_Calendar {
                 int i = monthChoice.getSelectedIndex();
                 if (i >= 0) {
                     mm = i;
-                    System.out.println("Month=" + mm);
+                    //System.out.println("Month=" + mm);
                     recompute();
                 }
             }
@@ -156,7 +165,7 @@ public class BRMS_Calendar {
         monthChoice.getAccessibleContext().setAccessibleDescription(
                 "Choose a month of the year");
 
-        yearChoice.setEditable(true);
+        //yearChoice.setEditable(true);
         for (int i = yy - 10; i < yy + 10; i++) {
             yearChoice.addItem(Integer.toString(i));
         }
@@ -189,7 +198,6 @@ public class BRMS_Calendar {
                 }
             }
         };
-        
 
         for (JButton day : days) {
             day.addActionListener(dateSetter);
@@ -234,13 +242,13 @@ public class BRMS_Calendar {
 
         // Fill in numbers for the day of month.
         for (int i = 1; i <= daysInMonth; i++) {
-            JButton b = days[daysWithNum =(leadGap + i - 1)];
+            JButton b = days[daysWithNum = (leadGap + i - 1)];
             b.setText(Integer.toString(i));
             b.setEnabled(true);
         }
 
         // 7 days/week * up to 6 rows
-        for (int i = daysWithNum+1; i < days.length; i++) {
+        for (int i = daysWithNum + 1; i < days.length; i++) {
             days[i].setText("");
             days[i].setEnabled(false);
         }

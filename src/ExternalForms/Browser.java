@@ -112,10 +112,19 @@ public class Browser extends JDialog {
 
             //this means, need to save pdf.
             if (check) {
+                //This JPanel will hold the datepicker**************************
                 JPanel p1 = new JPanel();
+                //The following code will disable the dates before today--------
                 JXDatePicker k = new JXDatePicker();
+                Calendar calendar = k.getMonthView().getCalendar();
+                calendar.setTime(new Date());
+                k.getMonthView().setLowerBound(calendar.getTime());
+                //--------------------------------------------------------------
+                //Set default date TODAY
                 k.setDate(new Date());
                 p1.add(k);
+                //**************************************************************
+                
                 int choice = JOptionPane.showConfirmDialog(null, p1,
                         "Select Claim Date", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (choice == JOptionPane.OK_OPTION) {
