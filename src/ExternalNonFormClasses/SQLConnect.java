@@ -58,7 +58,7 @@ public class SQLConnect {
 
         } catch (ClassNotFoundException | SQLException ex) {
             System.out.println("Error in constructor: " + ex);
-            JOptionPane.showMessageDialog(null, "Database Connection Error. Please click \"Options\" to configure.");
+            JOptionPane.showMessageDialog(null, "Database Connection Error. Please check \'Advanced Options\' configuration.");
             disp = false;
         }
     }
