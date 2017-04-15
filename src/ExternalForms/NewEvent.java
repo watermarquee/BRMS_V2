@@ -7,7 +7,18 @@ package ExternalForms;
 
 import brms_v2.Main;
 import ExternalNonFormClasses.SQLConnect;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import javax.swing.BorderFactory;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
 
 /**
  *
@@ -17,16 +28,18 @@ public class NewEvent extends JDialog {
 
     String month, day, year, user;
     Main main;
+    int callType, eventID;
+    SQLConnect connect;
 
     public NewEvent(Main main) {
         super(main);
         initComponents();
-        
+
         this.main = main;
-        
+        connect = new SQLConnect();
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-        
+
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -34,12 +47,15 @@ public class NewEvent extends JDialog {
             }
         });
     }
-    
-    public void setUserID(String userId){
+
+    public void setUserID(String userId) {
         this.user = userId;
     }
 
     public void setDate(String month, String day, String year) { //callClass
+        title.setText("Add Event");
+        save.setEnabled(false);
+        this.callType = 0;
         this.month = month;
         this.day = day;
         this.year = year;
@@ -47,9 +63,42 @@ public class NewEvent extends JDialog {
         main.setEnabled(false);
     }
 
-    public void getData() {
-        SQLConnect connect = new SQLConnect();
+    public void storeData() {
         connect.storeEvent(month, day, year, eTitle.getText(), eVenue.getText(), eTime.getText(), eRemarks.getText(), user);
+    }
+
+    public void updateData() {
+        connect.updateEvent(String.valueOf(eventID), eTitle.getText(), eVenue.getText(), eTime.getText(), eRemarks.getText());
+    }
+
+    public void deleteEvent(String eventID) {
+        connect.deleteEvent(eventID);
+        main.backFromClass("Deleted Event");
+        main.viewEventsOnThisDay();
+    }
+
+    public void editEvent(int eventID) {
+        save.setEnabled(false);
+        title.setText("Edit Event");
+        this.callType = 1;
+        this.eventID = eventID;
+        setData();
+    }
+
+    String eTitlePrim = "", eVenuePrim = "", eTimePrim = "", eRemarksPrim = ""; // check if values changed
+
+    public void setData() {
+        //getData
+        ArrayList<String> data = connect.getEventData(eventID);
+        eTitle.setText(data.get(0));
+        eVenue.setText(data.get(1));
+        eTime.setText(data.get(2));
+        eRemarks.setText(data.get(3));
+
+        eTitlePrim = data.get(0);
+        eVenuePrim = data.get(1);
+        eTimePrim = data.get(2);
+        eRemarksPrim = data.get(3);
     }
 
     public void emptyFields() {
@@ -63,6 +112,46 @@ public class NewEvent extends JDialog {
         main.setEnabled(true);
         main.setVisible(true);
         dispose();
+    }
+
+    public boolean isInputUpdated() {
+        return !eTitle.getText().equals(eTitlePrim)
+                || !eVenue.getText().equals(eVenuePrim)
+                || !eTime.getText().equals(eTimePrim)
+                || !eRemarks.getText().equals(eRemarksPrim);
+    }
+
+    public boolean hasInputs() {
+        return eTitle.getText().length() > 0
+                && eVenue.getText().length() > 0
+                && eTime.getText().length() > 0;
+    }
+
+    ArrayList<String> data;
+
+    public boolean hasDuplicate() {
+        data = connect.hasDuplicateEventTitle(eTitle.getText());
+        return data.size() > 0;
+    }
+
+    public void saveFuncs() {
+        if (callType == 0) {
+            storeData();
+            JOptionPane.showMessageDialog(this, "Sucessfully Added Event to Calendar!");
+            emptyFields();
+            this.setVisible(false);
+            enableMainHideThis();
+            main.backFromClass("Saved New Event");
+            main.viewEventsOnThisDay();
+        } else if (callType == 1) {
+            updateData();
+            JOptionPane.showMessageDialog(this, "Sucessfully Updated Event in Calendar!");
+            emptyFields();
+            this.setVisible(false);
+            enableMainHideThis();
+            main.backFromClass("Updated Event");
+            main.viewEventsOnThisDay();
+        }
     }
 
     /**
@@ -86,7 +175,7 @@ public class NewEvent extends JDialog {
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         eRemarks = new javax.swing.JTextArea();
-        jLabel5 = new javax.swing.JLabel();
+        title = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -114,22 +203,45 @@ public class NewEvent extends JDialog {
 
         jLabel1.setText("Event Title:");
 
+        eTitle.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                eTitleKeyReleased(evt);
+            }
+        });
+
         jLabel2.setText("Event Venue:");
 
         jLabel3.setText("Event Time:");
+
+        eVenue.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                eVenueKeyReleased(evt);
+            }
+        });
+
+        eTime.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                eTimeKeyReleased(evt);
+            }
+        });
 
         jLabel4.setText("Event Remarks:");
 
         eRemarks.setColumns(20);
         eRemarks.setRows(5);
+        eRemarks.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                eRemarksKeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(eRemarks);
 
-        jLabel5.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(0, 102, 153));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel5.setText("Add New Event");
-        jLabel5.setOpaque(true);
+        title.setBackground(new java.awt.Color(255, 255, 255));
+        title.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        title.setForeground(new java.awt.Color(0, 102, 153));
+        title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        title.setText("Add New Event");
+        title.setOpaque(true);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -138,7 +250,7 @@ public class NewEvent extends JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(title, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
@@ -157,7 +269,7 @@ public class NewEvent extends JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -209,12 +321,45 @@ public class NewEvent extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
-        getData();
-        emptyFields();
-        this.setVisible(false);
-        enableMainHideThis();
-        main.backFromClass("Saved New Event");
-        main.viewEventsOnThisDay();
+        if (!hasDuplicate()) {
+            saveFuncs();
+        } else {
+            //temporary
+            String[] columnNames = {"Form ID"};
+            Object[][] data1 = new Object[data.size()][1];
+            for (int x = 0; x < data.size(); x++) {
+                data1[x][0] = data.get(x);
+            }
+
+            JTable formsPanelTable = new JTable(data1, columnNames);
+            formsPanelTable.setEnabled(false);
+            formsPanelTable.setPreferredScrollableViewportSize(new Dimension(100, 70));
+            formsPanelTable.setFillsViewportHeight(true);
+            formsPanelTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            formsPanelTable.setDragEnabled(false);
+            JTableHeader head = formsPanelTable.getTableHeader();
+            head.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+            JScrollPane formsPanelSP = new JScrollPane(formsPanelTable);
+            //formsPanelSP.setBorder(BorderFactory.createMatteBorder(0, 25, 0, 25, Color.CYAN));
+            formsPanelSP.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 25));
+            formsPanelSP.setPreferredSize(formsPanelSP.getPreferredSize());
+            formsPanelSP.setBackground(Color.decode("#006699"));
+            JLabel jl = new JLabel("Duplicates Events Found in the following dates. Continue?");
+            JPanel pan = new JPanel();
+            GridLayout gl = new GridLayout(0, 1);
+            pan.add(jl);
+            pan.setLayout(gl);
+            pan.add(formsPanelSP);
+            pan.setPreferredSize(pan.getPreferredSize());
+            int result = JOptionPane.showConfirmDialog(null, pan, "Warning",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+            if (JOptionPane.OK_OPTION == result) {
+                saveFuncs();
+            }
+            //display dates with same title
+        }
     }//GEN-LAST:event_saveActionPerformed
 
     private void cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelActionPerformed
@@ -222,6 +367,46 @@ public class NewEvent extends JDialog {
         emptyFields();
         enableMainHideThis();
     }//GEN-LAST:event_cancelActionPerformed
+
+    private void eTitleKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_eTitleKeyReleased
+        if (callType == 1 && isInputUpdated() && hasInputs()) {
+            save.setEnabled(true);
+        } else if (callType == 0 && hasInputs()) {
+            save.setEnabled(true);
+        } else {
+            save.setEnabled(false);
+        }
+    }//GEN-LAST:event_eTitleKeyReleased
+
+    private void eVenueKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_eVenueKeyReleased
+        if (callType == 1 && isInputUpdated() && hasInputs()) {
+            save.setEnabled(true);
+        } else if (callType == 0 && hasInputs()) {
+            save.setEnabled(true);
+        } else {
+            save.setEnabled(false);
+        }
+    }//GEN-LAST:event_eVenueKeyReleased
+
+    private void eTimeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_eTimeKeyReleased
+        if (callType == 1 && isInputUpdated() && hasInputs()) {
+            save.setEnabled(true);
+        } else if (callType == 0 && hasInputs()) {
+            save.setEnabled(true);
+        } else {
+            save.setEnabled(false);
+        }
+    }//GEN-LAST:event_eTimeKeyReleased
+
+    private void eRemarksKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_eRemarksKeyReleased
+        if (callType == 1 && isInputUpdated() && hasInputs()) {
+            save.setEnabled(true);
+        } else if (callType == 0 && hasInputs()) {
+            save.setEnabled(true);
+        } else {
+            save.setEnabled(false);
+        }
+    }//GEN-LAST:event_eRemarksKeyReleased
 
     /**
      * @param args the command line arguments
@@ -237,9 +422,9 @@ public class NewEvent extends JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton save;
+    private javax.swing.JLabel title;
     // End of variables declaration//GEN-END:variables
 }

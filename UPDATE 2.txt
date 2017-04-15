@@ -1,0 +1,7 @@
+UPDATE 2:
+-calendar -> edit event fully functional; save disabled until input is changed; prompts
+-calendar -> add event fully functional; save disabled until input is placed; prompts
+-calendar -> delete event fully functional; prompts
+-calendar -> add event can check duplicates; prompts dates
+-options -> view users -> edit -> save disabled until input is placed
+-options -> view users -> edit -> save disabled until input is changed

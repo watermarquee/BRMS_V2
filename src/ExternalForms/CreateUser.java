@@ -23,7 +23,8 @@ public class CreateUser extends JDialog {
 
     Main main;
     String officialID, storeMethod = "", userID = ""; //create; update
-    String adminID, position, personID, personName;
+    String adminID, position, personID, personName, userNamePrim, passwordPrim;
+    int comPrim;
     LogHandler logHandler;
 
     public CreateUser(Main main) {
@@ -55,6 +56,7 @@ public class CreateUser extends JDialog {
         if (method.equals("update")) {
             placeData();
         }
+        save.setEnabled(false);
     }
 
     public void callClassEdit(String userID, String method) {
@@ -69,6 +71,8 @@ public class CreateUser extends JDialog {
         if (method.equals("update")) {
             placeData();
         }
+
+        save.setEnabled(false);
     }
 
     public void setLogHandler(LogHandler logHandler) {
@@ -172,6 +176,11 @@ public class CreateUser extends JDialog {
 
         user.setBackground(new java.awt.Color(255, 255, 255));
         user.setForeground(new java.awt.Color(0, 0, 0));
+        user.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                userKeyReleased(evt);
+            }
+        });
 
         jLabel1.setBackground(new java.awt.Color(0, 102, 153));
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -187,6 +196,11 @@ public class CreateUser extends JDialog {
 
         pass.setBackground(new java.awt.Color(255, 255, 255));
         pass.setForeground(new java.awt.Color(0, 0, 0));
+        pass.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                passKeyReleased(evt);
+            }
+        });
 
         jLabel3.setBackground(new java.awt.Color(0, 102, 153));
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -198,6 +212,11 @@ public class CreateUser extends JDialog {
         combo1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         combo1.setForeground(new java.awt.Color(0, 102, 153));
         combo1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Level 1", "Level 2", "Level 3" }));
+        combo1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                combo1MouseClicked(evt);
+            }
+        });
 
         title.setBackground(new java.awt.Color(255, 255, 255));
         title.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -306,8 +325,40 @@ public class CreateUser extends JDialog {
             main.loadUsers();
             this.setVisible(false);
             enableMainHideThis();
-        } else  JOptionPane.showMessageDialog(this, "Username Already Taken.");
+        } else {
+            JOptionPane.showMessageDialog(this, "Username Already Taken.");
+        }
     }//GEN-LAST:event_saveActionPerformed
+
+    private void userKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_userKeyReleased
+        if (storeMethod.equals("create") && hasInputs()) {
+            save.setEnabled(true);
+        } else if (storeMethod.equals("update") && hasInputs() && isInputUpdated()) {
+            save.setEnabled(true);
+        } else {
+            save.setEnabled(false);
+        }
+    }//GEN-LAST:event_userKeyReleased
+
+    private void passKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_passKeyReleased
+        if (storeMethod.equals("create") && hasInputs()) {
+            save.setEnabled(true);
+        } else if (storeMethod.equals("update") && hasInputs() && isInputUpdated()) {
+            save.setEnabled(true);
+        } else {
+            save.setEnabled(false);
+        }
+    }//GEN-LAST:event_passKeyReleased
+
+    private void combo1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_combo1MouseClicked
+        if (storeMethod.equals("create") && hasInputs()) {
+            save.setEnabled(true);
+        } else if (storeMethod.equals("update") && hasInputs() && isInputUpdated()) {
+            save.setEnabled(true);
+        } else {
+            save.setEnabled(false);
+        }
+    }//GEN-LAST:event_combo1MouseClicked
 
     public void enableMainHideThis() {
         main.setEnabled(true);
@@ -323,6 +374,10 @@ public class CreateUser extends JDialog {
                 user.setText(rx.getString("username"));
                 pass.setText(rx.getString("password"));
                 combo1.setSelectedItem(rx.getString("adminType"));
+
+                userNamePrim = user.getText();
+                passwordPrim = pass.getText();
+                comPrim = combo1.getSelectedIndex();
             }
         } catch (SQLException ex) {
             Logger.getLogger(CreateUser.class.getName()).log(Level.SEVERE, null, ex);
@@ -343,6 +398,16 @@ public class CreateUser extends JDialog {
             Logger.getLogger(CreateUser.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
+    }
+
+    public boolean isInputUpdated() {
+        return !user.getText().equals(userNamePrim)
+                || !pass.getText().equals(passwordPrim);
+    }
+
+    public boolean hasInputs() {
+        return user.getText().length() > 0
+                && pass.getText().length() > 0;
     }
     /**
      * @param args the command line arguments

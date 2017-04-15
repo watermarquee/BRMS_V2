@@ -58,12 +58,12 @@ public class SQLConnect {
 
         } catch (ClassNotFoundException | SQLException ex) {
             System.out.println("Error in constructor: " + ex);
-            JOptionPane.showMessageDialog(null, "Database Connection Error. Please check \'Advanced Options\' configuration.");
+            JOptionPane.showMessageDialog(null, "Database Connection Error. Please recheck \'Advanced Options\' configuration.");
             disp = false;
         }
     }
-    
-    public boolean toDispose(){
+
+    public boolean toDispose() {
         return disp;
     }
 
@@ -626,13 +626,53 @@ public class SQLConnect {
     //Calendar Panel -- Event
     public void storeEvent(String m, String d, String y, String etit, String ev, String etim, String erem, String userId) {
         try {
-            String query = "INSERT INTO event (month, day, year, title, venue, time, remarks, userID) VALUES(\"" + m + "\",\"" + d + "\",\"" + y + "\",\"" + etit + "\",\"" + ev + "\",\"" + etim + "\",\"" + erem + "\",\"" + userId + "\")";
+            String query = "INSERT INTO event (month, day, year, title, venue, time, remarks, userID, date_added, date_mod) VALUES(\"" + m + "\",\"" + d + "\",\"" + y + "\",\"" + etit + "\",\"" + ev + "\",\"" + etim + "\",\"" + erem + "\",\"" + userId + "\", CURDATE(), CURDATE())";
             System.out.println("" + query);
             st.executeUpdate(query);
 
         } catch (SQLException ex) {
             Logger.getLogger(SQLConnect.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void updateEvent(String eID, String etit, String ev, String etim, String erem) {
+        try {
+            String query = "UPDATE event SET title =  \"" + etit + "\", venue = \"" + ev + "\", time =\"" + etim + "\" , remarks=\"" + erem + "\" ,  date_mod = CURDATE() WHERE eventID = " + eID + ";";
+            System.out.println("" + query);
+            st.executeUpdate(query);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLConnect.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void deleteEvent(String eID) {
+        try {
+            String query = "DELETE FROM event WHERE eventID = " + eID + ";";
+            System.out.println("" + query);
+            st.executeUpdate(query);
+            JOptionPane.showMessageDialog(null, "Successfully Deleted Event!");
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Unsuccessfully Deleted Event!");
+            Logger.getLogger(SQLConnect.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public ArrayList<String> hasDuplicateEventTitle(String title) {
+        ArrayList<String> data = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM event WHERE title = \"" + title + "\";";
+            System.out.println("" + query);
+            ResultSet rz = st.executeQuery(query);
+            while (rz.next()) {
+                data.add(rz.getString("month")+" "+rz.getString("day")+", "+rz.getString("year"));
+                System.out.println(rz.getString("month")+" "+rz.getString("day")+", "+rz.getString("year"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLConnect.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return data;
     }
 
     public ResultSet getAllEvents(String month, String day) {
@@ -810,24 +850,24 @@ public class SQLConnect {
 
         return rs;
     }
-    
+
     //new for forms
     public ArrayList<ArrayList<String>> getAllFormsArrayList() {
         ArrayList<ArrayList<String>> dataAll = new ArrayList<>();
         try {
             String query = "SELECT * FROM form;";
             ResultSet rx = st.executeQuery(query);
-            
-            while(rx.next()){
+
+            while (rx.next()) {
                 ArrayList<String> data = new ArrayList<>();
-                        
-                data.add(rx.getString("formID"));        
-                data.add(rx.getString("formName"));        
-                data.add(rx.getString("status"));        
-                data.add(rx.getString("dateAdded"));        
-                data.add(rx.getString("dateModified"));        
+
+                data.add(rx.getString("formID"));
+                data.add(rx.getString("formName"));
+                data.add(rx.getString("status"));
+                data.add(rx.getString("dateAdded"));
+                data.add(rx.getString("dateModified"));
                 data.add(rx.getString("userID"));
-                
+
                 dataAll.add(data);
             }
             rx.close();
@@ -1289,4 +1329,24 @@ public class SQLConnect {
         return dataAll;
     }
 
+    public ArrayList<String> getEventData(int id) {
+        ArrayList<String> data = new ArrayList<>();
+        try {
+            String query4 = "select * from event where eventID = " + id + ";";
+            System.out.println(query4);
+            ResultSet rz = st.executeQuery(query4);
+            if (rz.next()) {
+                do {
+                    data.add(rz.getString("title"));
+                    data.add(rz.getString("venue"));
+                    data.add(rz.getString("time"));
+                    data.add(rz.getString("remarks"));
+                } while (rz.next());
+                rz.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLConnect.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return data;
+    }
 }

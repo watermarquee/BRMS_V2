@@ -5,8 +5,17 @@
  */
 package brms_v2;
 
-import java.util.regex.Pattern;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
 
 /**
  * Hello World example using the paper size Letter.
@@ -40,8 +49,44 @@ public class HelloWorldLetter {
 //            //    String text = textField1.getText() + "\n" + (checkBox.isSelected() ? "Checked" : "Unchecked") + "\n" + textField2.getText() + "\n";
 //        }
 
-        if (!(Pattern.matches("^[0-9]+$", "12"))) {
-            JOptionPane.showMessageDialog(null, "Please enter a valid character", "Error", JOptionPane.ERROR_MESSAGE);
+//        if (!(Pattern.matches("^[0-9]+$", "12"))) {
+//            JOptionPane.showMessageDialog(null, "Please enter a valid character", "Error", JOptionPane.ERROR_MESSAGE);
+//        }
+        String[] columnNames = {"Form ID"};
+
+        Object[][] data = {
+            {"Kathy"},
+            {"John"},
+            {"Sue"},
+            {"Jane"},
+            {"Joe"}
+        };
+
+        JTable formsPanelTable = new JTable(data, columnNames);
+        formsPanelTable.setPreferredScrollableViewportSize(new Dimension(50, 70));
+        formsPanelTable.setFillsViewportHeight(true);
+        formsPanelTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        formsPanelTable.setDragEnabled(false);
+        JTableHeader head = formsPanelTable.getTableHeader();
+        head.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        JScrollPane formsPanelSP = new JScrollPane(formsPanelTable);
+        formsPanelSP.setPreferredSize(formsPanelSP.getPreferredSize());
+        //formsPanelSP.setBorder(BorderFactory.createMatteBorder(0, 25, 0, 25, Color.CYAN));
+        
+        JLabel jl = new JLabel("Duplicates Events Found in the following dates. Continue?");
+        JPanel pan = new JPanel();
+        GridLayout gl = new GridLayout(0, 1);
+        pan.setLayout(gl);
+        pan.add(jl);
+        pan.add(formsPanelSP);
+        pan.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 25));
+        pan.setPreferredSize(pan.getPreferredSize());
+        int result = JOptionPane.showConfirmDialog(null, pan, "Warning",
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        
+        if (JOptionPane.OK_OPTION == result) {
+            System.out.println("PAK!");
         }
     }
 }
