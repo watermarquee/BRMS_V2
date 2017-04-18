@@ -25,7 +25,10 @@ import ExternalForms.VisitNote;
 import ExternalNonFormClasses.LogHandler;
 import ExternalNonFormClasses.PDFEnator;
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -39,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -52,6 +56,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -61,6 +66,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 //imp
 import org.jdesktop.swingx.JXMonthView;
 import org.jdesktop.swingx.plaf.basic.CalendarHeaderHandler;
@@ -154,7 +161,6 @@ public class Main extends JFrame {
 
         //UIManager.put("JFrame.background", new ColorUIResource(255, 255, 255));
         //this.getContentPane().setBackground(new ColorUIResource(255, 255, 255));
-
         Border border = rh_TID.getBorder();
         Border margin = new EmptyBorder(10, 10, 10, 10);
         rh_TID.setBorder(new CompoundBorder(border, margin));
@@ -252,14 +258,57 @@ public class Main extends JFrame {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
         setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
+
+        tableUsers.setDefaultRenderer(Object.class, new TableCellRenderer() {
+            private DefaultTableCellRenderer DEFAULT_RENDERER = new DefaultTableCellRenderer();
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = DEFAULT_RENDERER.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (isSelected) {
+                    c.setBackground(Color.BLUE);
+                } else if (table.getValueAt(row, column).equals("inactive")) {
+                    c.setBackground(Color.RED);
+                } else if (table.getValueAt(row, column).equals("active")) {
+                    c.setBackground(Color.GREEN);
+                } else {
+                    c.setBackground(Color.LIGHT_GRAY);
+                }
+
+                //Add below code here
+                return c;
+            }
+
+        });
+
+        //dob days
+        for (int x = 1; x <= 31; x++) {
+            dob_d.addItem("" + x);
+        }
+        Calendar calD = Calendar.getInstance();
+        int dayOfMonth = calD.get(Calendar.DAY_OF_MONTH);
+
+        String dayOfMonthStr = String.valueOf(dayOfMonth);
+        dob_d.setSelectedItem(dayOfMonthStr);
+
+        int year = calD.get(Calendar.YEAR);
+
+        String yearStr = String.valueOf(year);
+
+        //dob years
+        for (int x = 1900; x <= year; x++) {
+            dob_y.addItem("" + x);
+        }
+
+        dob_y.setSelectedItem(yearStr);
+
     }
 
-    public void logOutHideThis() {
-        logIn.setEnabled(true);
-        logIn.setVisible(true);
-        dispose();
-    }
-
+//    public void logOutHideThis() {
+//        logIn.setEnabled(true);
+//        logIn.setVisible(true);
+//        dispose();
+//    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -319,13 +368,15 @@ public class Main extends JFrame {
         jLabel41 = new javax.swing.JLabel();
         jLabel42 = new javax.swing.JLabel();
         pID = new javax.swing.JLabel();
-        dob = new org.jdesktop.swingx.JXDatePicker();
         printButtProfile = new javax.swing.JButton();
         new_note = new javax.swing.JLabel();
         new_s1 = new javax.swing.JLabel();
         new_s2 = new javax.swing.JLabel();
         new_s3 = new javax.swing.JLabel();
         telNum = new javax.swing.JTextField();
+        dob_m = new javax.swing.JComboBox<>();
+        dob_d = new javax.swing.JComboBox<>();
+        dob_y = new javax.swing.JComboBox<>();
         famback = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         mlname = new javax.swing.JTextField();
@@ -800,7 +851,7 @@ public class Main extends JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 611, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(vc_searchCitizen, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE))
+                        .addComponent(vc_searchCitizen, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, viewCitizensPanelLayout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -889,13 +940,6 @@ public class Main extends JFrame {
 
         jLabel42.setText("Citizen ID:");
 
-        dob.setForeground(new java.awt.Color(0, 0, 0));
-        dob.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dobActionPerformed(evt);
-            }
-        });
-
         printButtProfile.setBackground(new java.awt.Color(189, 195, 198));
         printButtProfile.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         printButtProfile.setForeground(new java.awt.Color(0, 102, 153));
@@ -921,6 +965,12 @@ public class Main extends JFrame {
         new_s3.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         new_s3.setForeground(new java.awt.Color(255, 0, 0));
         new_s3.setText("*");
+
+        dob_m.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }));
+
+        dob_d.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        dob_y.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout personalInfoLayout = new javax.swing.GroupLayout(personalInfo);
         personalInfo.setLayout(personalInfoLayout);
@@ -963,17 +1013,22 @@ public class Main extends JFrame {
                                         .addComponent(sex, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addComponent(pID)))
                             .addGroup(personalInfoLayout.createSequentialGroup()
-                                .addComponent(dob, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(30, 30, 30)
                                 .addGroup(personalInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, personalInfoLayout.createSequentialGroup()
+                                    .addGroup(personalInfoLayout.createSequentialGroup()
+                                        .addGap(120, 120, 120)
                                         .addComponent(jLabel11)
                                         .addGap(29, 29, 29))
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, personalInfoLayout.createSequentialGroup()
+                                        .addComponent(dob_m, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(dob_d, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(dob_y, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(jLabel10)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                                 .addGroup(personalInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(religion, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                                    .addComponent(religion, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
                                     .addComponent(pob)))))
                     .addGroup(personalInfoLayout.createSequentialGroup()
                         .addGroup(personalInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1043,10 +1098,11 @@ public class Main extends JFrame {
                 .addGroup(personalInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(personalInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel9)
-                        .addComponent(pob, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, personalInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(dob, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel10)))
+                        .addComponent(pob, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(dob_m, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(dob_d, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(dob_y, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(personalInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
@@ -1077,7 +1133,7 @@ public class Main extends JFrame {
                     .addComponent(email, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(67, 67, 67)
                 .addComponent(new_note)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 133, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 129, Short.MAX_VALUE)
                 .addComponent(printButtProfile, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1232,11 +1288,9 @@ public class Main extends JFrame {
                                     .addComponent(jLabel20))
                                 .addGap(19, 19, 19)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(fmname, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
-                                            .addComponent(mlname))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(fmname, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+                                        .addComponent(mlname))
                                     .addComponent(ffname)))
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
                             .addComponent(jLabel29, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -3188,7 +3242,7 @@ public class Main extends JFrame {
                     .addComponent(rh_viewFrom, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(rh_back, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(profile_claimForm2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(145, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
 
         formSelectPanel.setBackground(new java.awt.Color(0, 102, 153));
@@ -3940,7 +3994,7 @@ public class Main extends JFrame {
             .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane1Layout.createSequentialGroup()
                     .addGap(22, 22, 22)
-                    .addComponent(logHistoryPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 761, Short.MAX_VALUE)
+                    .addComponent(logHistoryPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 762, Short.MAX_VALUE)
                     .addContainerGap()))
             .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jLayeredPane1Layout.createSequentialGroup()
@@ -4023,7 +4077,21 @@ public class Main extends JFrame {
             }
 
             profileSave.setText("Save");
-            dob.setDate(new Date());
+
+            Calendar calD = Calendar.getInstance();
+
+            int month = calD.get(Calendar.MONTH);
+            //String monthStr = String.valueOf(month);
+            dob_m.setSelectedIndex(month);
+
+            int dayOfMonth = calD.get(Calendar.DAY_OF_MONTH);
+            String dayOfMonthStr = String.valueOf(dayOfMonth);
+            dob_d.setSelectedItem(dayOfMonthStr);
+
+            int year = calD.get(Calendar.YEAR);
+            String yearStr = String.valueOf(year);
+            dob_y.setSelectedItem(yearStr);
+
             profilePanel.setVisible(true);
             jLabel42.setVisible(false);
 
@@ -4140,7 +4208,20 @@ public class Main extends JFrame {
                             gpanel.add(newG);
                             gpanel.add(exG);
                             newG.setSelected(true);
-                            dob.setDate(new Date());
+
+                            Calendar calD = Calendar.getInstance();
+
+                            int month = calD.get(Calendar.MONTH);
+                            //String monthStr = String.valueOf(month);
+                            dob_m.setSelectedIndex(month);
+
+                            int dayOfMonth = calD.get(Calendar.DAY_OF_MONTH);
+                            String dayOfMonthStr = String.valueOf(dayOfMonth);
+                            dob_d.setSelectedItem(dayOfMonthStr);
+
+                            int year = calD.get(Calendar.YEAR);
+                            String yearStr = String.valueOf(year);
+                            dob_y.setSelectedItem(yearStr);
 
                             int value2 = JOptionPane.showConfirmDialog(null, gpanel,
                                     "Select Guest Type:", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -4259,14 +4340,11 @@ public class Main extends JFrame {
             boolean print = true;
             connect.closeCon();
             connect = new SQLConnect();
+            ArrayList<String> errs = checkProfilingErrors();
 
             switch (addFunctionType) {
                 case "addc": //WHEN USER ADDS A NEW CITIZEN
-                    if ((lname.getText().length() > 0 && fname.getText().length() > 0 && address.getText().length() > 0)
-                            && Pattern.matches("^[a-zA-Z]+$", fname.getText())
-                            && Pattern.matches("^[a-zA-Z]+$", lname.getText())
-                            && Pattern.matches("^[0-9]+$", telNum.getText())) { //required fields
-
+                    if (errs.size() <= 0) { //no errors
                         //if (!personExist()) {
                         connect.storeNewPerson("citizen", createAddQuery("person", "none"));
 
@@ -4307,18 +4385,7 @@ public class Main extends JFrame {
                         childrenCount = 0;
                         //}
                     } else {
-                        String err = "";
-                        if ((!Pattern.matches("^[a-zA-Z]+$", fname.getText()) || !Pattern.matches("^[a-zA-Z]+$", lname.getText())) && (fname.getText().length() > 0 && lname.getText().length() > 0)) {
-                            err += "Names must contain letters only.";
-                        } else {
-                            err = "Required fields cannot be empty.";
-                        }
-
-                        if (!Pattern.matches("^[0-9]+$", telNum.getText()) && telNum.getText().length() > 0) {
-                            err += "\nTelephone Number must contain numbers only";
-                        }
-
-                        JOptionPane.showMessageDialog(this, err);
+                        displayProfileErrors(errs);
                         print = false;
                     }
                     break;
@@ -4332,7 +4399,7 @@ public class Main extends JFrame {
                     print = false;
                     break;
                 case "updatec": //WHEN USER UPDATE CITIZEN
-                    if (lname.getText().length() > 0 && fname.getText().length() > 0 && address.getText().length() > 0) { //required fields
+                    if (errs.size() <= 0) { //required fields
 
                         connect.closeCon();
                         connect = new SQLConnect();
@@ -4352,14 +4419,12 @@ public class Main extends JFrame {
                         profilePanel.setVisible(true); //call view citizens panel
                         printButtProfile.setVisible(true);
                     } else {
-                        JOptionPane.showMessageDialog(this, "Required fields cannot be empty.");
+                        displayProfileErrors(errs);
                         print = false;
                     }
                     break;
                 case "addg":
-
-                    if (lname.getText().length() > 0 && fname.getText().length() > 0 && address.getText().length() > 0) { //required fields
-
+                    if (errs.size() <= 0) { //required fields
                         connect.storeNewPerson("guest", createAddQuery("person", "none"));
 
                         connect.closeCon();
@@ -4394,11 +4459,9 @@ public class Main extends JFrame {
                             setTransactionsData(); //refresh
                             transactionsPanel.setVisible(true); //call view citizens panel
                         }
-
                         emptyFields();
-
                     } else {
-                        JOptionPane.showMessageDialog(this, "Required fields cannot be empty.");
+                        displayProfileErrors(errs);
                     }
 
                     //System.out.println("ADDG SAVE Functions Coming Soon");
@@ -4413,7 +4476,7 @@ public class Main extends JFrame {
                     break;
                 case "updateg":
                     msg = "Updated";
-                    if (lname.getText().length() > 0 && fname.getText().length() > 0 && address.getText().length() > 0) { //required fields
+                    if (errs.size() <= 0) { //required fields
 
                         connect.closeCon();
                         connect = new SQLConnect();
@@ -4432,15 +4495,13 @@ public class Main extends JFrame {
 
                         printButtProfile.setVisible(true);
                     } else {
-                        JOptionPane.showMessageDialog(this, "Required fields cannot be empty.");
+                        displayProfileErrors(errs);
                     }
-                    //System.out.println("UPDATEG SAVE Functions Coming Soon");
                     break;
             }
 
             if (print) {
                 //Log entry
-                SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yy");
                 JOptionPane.showMessageDialog(this, "Successfully " + msg + " Record!");
             }
         }
@@ -5132,21 +5193,37 @@ public class Main extends JFrame {
         if (logged_userType.equals("Level 1")) {
             JOptionPane.showMessageDialog(null, "You do not have enough Administrative Priveleges to use the function!");
         } else if (requestHistoryTable.getSelectedRow() >= 0) {
-            Calendar c = Calendar.getInstance();
             SimpleDateFormat sdf;
-            sdf = new SimpleDateFormat("HH:mm:ss");
-            String timeClaimed = sdf.format(c.getTime());
-
             sdf = new SimpleDateFormat("MM-dd-yy");
-            String dateClaimed = sdf.format(new Date());
+            String dateToday = sdf.format(new Date());
+            String dateOfClaim = requestHistoryTable.getValueAt(requestHistoryTable.getSelectedRow(), 3).toString();
 
-            connect.closeCon();
-            connect = new SQLConnect();
-            connect.claimForm(currentPersonTransID, String.valueOf(requestHistoryTable.getValueAt(requestHistoryTable.getSelectedRow(), 0)), timeClaimed, dateClaimed);
-            logHandler.saveLog("Claimed Requested Form with -Transaction ID: " + currentPersonTransID + " -Person ID: " + currentPersonID + " - Person Name: " + currentPersonName + " -Request Form ID: " + String.valueOf(requestHistoryTable.getValueAt(requestHistoryTable.getSelectedRow(), 0)) + " -Requested Form Name: " + String.valueOf(requestHistoryTable.getValueAt(requestHistoryTable.getSelectedRow(), 1)));
+            if (dateToday.compareTo(dateOfClaim) < 0) {
+                JLabel jl = new JLabel("You are about to claim the form before the claim date. Continue?");
+                JPanel pan = new JPanel();
+                pan.add(jl);
+                pan.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 25));
+                pan.setPreferredSize(pan.getPreferredSize());
+                int result = JOptionPane.showConfirmDialog(null, pan, "Warning",
+                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-            JOptionPane.showMessageDialog(null, "Successfully Claimed Form!");
-            refreshRequestHistory(requestHistoryTable);
+                if (JOptionPane.OK_OPTION == result) {
+                    Calendar c = Calendar.getInstance();
+                    sdf = new SimpleDateFormat("HH:mm:ss");
+                    String timeClaimed = sdf.format(c.getTime());
+
+                    sdf = new SimpleDateFormat("MM-dd-yy");
+                    String dateClaimed = sdf.format(new Date());
+
+                    connect.closeCon();
+                    connect = new SQLConnect();
+                    connect.claimForm(currentPersonTransID, String.valueOf(requestHistoryTable.getValueAt(requestHistoryTable.getSelectedRow(), 0)), timeClaimed, dateClaimed);
+                    logHandler.saveLog("Claimed Requested Form with -Transaction ID: " + currentPersonTransID + " -Person ID: " + currentPersonID + " - Person Name: " + currentPersonName + " -Request Form ID: " + String.valueOf(requestHistoryTable.getValueAt(requestHistoryTable.getSelectedRow(), 0)) + " -Requested Form Name: " + String.valueOf(requestHistoryTable.getValueAt(requestHistoryTable.getSelectedRow(), 1)));
+
+                    JOptionPane.showMessageDialog(null, "Successfully Claimed Form!");
+                    refreshRequestHistory(requestHistoryTable);
+                }
+            }
         }
     }//GEN-LAST:event_rh_claimFormActionPerformed
 
@@ -5177,8 +5254,9 @@ public class Main extends JFrame {
     }//GEN-LAST:event_f_backActionPerformed
 
     private void logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutActionPerformed
-        logOutHideThis();
+        //logOutHideThis();
         logHandler.saveLog("Logged Out with -User ID: " + logged_userID + " -User Name: " + logged_username);
+        dispose();
         logIn.callClass();
         System.out.println("\n*********************************************");
         System.out.println("LOG OUT SUCCESSFUL!");
@@ -5202,7 +5280,7 @@ public class Main extends JFrame {
 
             //hideAllPanels();
             browser.setVisible(true);
-            browser.navigate(requestedFormName, "printable"); //form name, folder name
+            //browser.navigate(requestedFormName, "printable"); //form name, folder name
             //display JPanel with PDF form
 
             //RequestFormBrowser rfb = new RequestFormBrowser(this, screenSize, "SAVE", requestedFormName);
@@ -5212,7 +5290,7 @@ public class Main extends JFrame {
 
     private void requestHistoryTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_requestHistoryTableMouseReleased
         if (requestHistoryTable.getSelectedRow() >= 0) {
-            if (requestHistoryTable.getValueAt(requestHistoryTable.getSelectedRow(), 5).equals("N/A; N/A")) {
+            if (requestHistoryTable.getValueAt(requestHistoryTable.getSelectedRow(), 4).equals("N/A; N/A")) {
                 rh_claimForm.setEnabled(true);
             } else {
                 rh_claimForm.setEnabled(false);
@@ -5413,10 +5491,6 @@ public class Main extends JFrame {
     private void fl_formSettsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fl_formSettsActionPerformed
         formOp.callClass(connect);
     }//GEN-LAST:event_fl_formSettsActionPerformed
-
-    private void dobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dobActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_dobActionPerformed
 
     private void lnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lnameActionPerformed
         // TODO add your handling code here:
@@ -5657,7 +5731,9 @@ public class Main extends JFrame {
         nameEx.setEnabled(false);
         sex.setEnabled(false);
         status.setEnabled(false);
-        dob.setEnabled(false);
+        dob_m.setEnabled(false);
+        dob_d.setEnabled(false);
+        dob_y.setEnabled(false);
         pob.setEnabled(false);
         age.setEnabled(false);
         religion.setEnabled(false);
@@ -5695,11 +5771,11 @@ public class Main extends JFrame {
 
         String query = "";
         String formattedDate;
-        Date data = dob.getDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yy");
+        //Date data = dob.getDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
 
-        if (data != null) {
-            formattedDate = sdf.format(data);
+        if (dob_m != null && dob_d != null && dob_y != null) {
+            formattedDate = (dob_m.getSelectedIndex() + 1) + "-" + dob_d.getSelectedItem() + "-" + dob_y.getSelectedItem();
         } else {
             formattedDate = sdf.format(new Date());
         }
@@ -5749,11 +5825,11 @@ public class Main extends JFrame {
 
         String query = "";
         String formattedDate;
-        Date data = dob.getDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yy");
+        //Date data = dob.getDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
 
-        if (data != null) {
-            formattedDate = sdf.format(data);
+        if (dob_m != null && dob_d != null && dob_y != null) {
+            formattedDate = (dob_m.getSelectedIndex() + 1) + "-" + dob_d.getSelectedItem() + "-" + dob_y.getSelectedItem();
         } else {
             formattedDate = sdf.format(new Date());
         }
@@ -5799,11 +5875,12 @@ public class Main extends JFrame {
         ArrayList<String> dataAll = new ArrayList<>();
 
         String formattedDate;
-        Date data = dob.getDate();
-        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yy");
+        String query = "";
+        //Date data = dob.getDate();
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
 
-        if (data != null) {
-            formattedDate = sdf.format(data);
+        if (dob_m != null && dob_d != null && dob_y != null) {
+            formattedDate = (dob_m.getSelectedIndex() + 1) + "-" + dob_d.getSelectedItem() + "-" + dob_y.getSelectedItem();
         } else {
             formattedDate = sdf.format(new Date());
         }
@@ -6064,7 +6141,21 @@ public class Main extends JFrame {
         nameEx.setSelectedIndex(0);
         sex.setSelectedIndex(0);
         status.setSelectedIndex(0);
-        dob.setDate(new Date());
+
+        Calendar calD = Calendar.getInstance();
+
+        int month = calD.get(Calendar.MONTH);
+        //String monthStr = String.valueOf(month);
+        dob_m.setSelectedIndex(month);
+
+        int dayOfMonth = calD.get(Calendar.DAY_OF_MONTH);
+        String dayOfMonthStr = String.valueOf(dayOfMonth);
+        dob_d.setSelectedItem(dayOfMonthStr);
+
+        int year = calD.get(Calendar.YEAR);
+        String yearStr = String.valueOf(year);
+        dob_y.setSelectedItem(yearStr);
+
         pob.setText("");
         age.setText("");
         religion.setText("");
@@ -6119,7 +6210,9 @@ public class Main extends JFrame {
         nameEx.setEnabled(true);
         sex.setEnabled(true);
         status.setEnabled(true);
-        dob.setEnabled(true);
+        dob_m.setEnabled(true);
+        dob_d.setEnabled(true);
+        dob_y.setEnabled(true);
         pob.setEnabled(true);
         age.setEnabled(true);
         religion.setEnabled(true);
@@ -6451,9 +6544,13 @@ public class Main extends JFrame {
                 sex.setSelectedItem(rs.getString("gender"));
                 address.setText(rs.getString("address"));
 
-                DateFormat formatter = new SimpleDateFormat("MM-dd-yy");
-                Date date = formatter.parse(rs.getString("dob"));
-                dob.setDate(date);
+//                DateFormat formatter = new SimpleDateFormat("MM-dd-yy");
+//                Date date = formatter.parse(rs.getString("dob"));
+//                System.out.println("DATE:: "+date.toString());
+                String dit[] = rs.getString("dob").split("-");
+                dob_m.setSelectedIndex(Integer.parseInt(dit[0]) - 1);
+                dob_d.setSelectedIndex(Integer.parseInt(dit[1]) - 1);
+                dob_y.setSelectedItem(dit[2]);
             }
 
             currentPersonName = fname.getText() + " " + lname.getText();
@@ -6593,7 +6690,7 @@ public class Main extends JFrame {
                 }
             }
 
-        } catch (ParseException | SQLException ex) {
+        } catch (SQLException ex) {
             Logger.getLogger(Main.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
@@ -6841,7 +6938,19 @@ public class Main extends JFrame {
                         }
 
                         profileSave.setText("Save");
-                        dob.setDate(new Date());
+                        Calendar calD = Calendar.getInstance();
+
+                        int month = calD.get(Calendar.MONTH);
+                        //String monthStr = String.valueOf(month);
+                        dob_m.setSelectedIndex(month);
+
+                        int dayOfMonth = calD.get(Calendar.DAY_OF_MONTH);
+                        String dayOfMonthStr = String.valueOf(dayOfMonth);
+                        dob_d.setSelectedItem(dayOfMonthStr);
+
+                        int year = calD.get(Calendar.YEAR);
+                        String yearStr = String.valueOf(year);
+                        dob_y.setSelectedItem(yearStr);
                         profilePanel.setVisible(true);
                         jLabel42.setVisible(false);
                         fname.setText(searchField.getText());
@@ -6889,6 +6998,59 @@ public class Main extends JFrame {
             Logger.getLogger(Main.class
                     .getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public ArrayList<String> checkProfilingErrors() {
+        ArrayList<String> errs = new ArrayList<>();
+
+        if (lname.getText().length() <= 0 || fname.getText().length() <= 0 || address.getText().length() <= 0) {
+            errs.add("Required Fields Must No Be Empty");
+        }
+        if (lname.getText().length() > 0 && !Pattern.matches("^[a-zA-Z]+$", lname.getText())) {
+            errs.add("Last Name must contain letters only");
+        }
+
+        if (fname.getText().length() > 0 && !Pattern.matches("^[a-zA-Z]+$", fname.getText())) {
+            errs.add("First Name must contain letters only");
+        }
+
+        if (telNum.getText().length() > 0 && !Pattern.matches("^[0-9]+$", telNum.getText())) {
+            errs.add("Telephone must contain numbers only");
+        }
+
+        return errs;
+    }
+
+    public void displayProfileErrors(ArrayList<String> errs) {
+        Object[][] data = new Object[errs.size()][1];
+        for (int x = 0; x < errs.size(); x++) {
+            data[x][0] = errs.get(x);
+        }
+        String[] columnNames = {"Errors Found"};
+//qwerty
+        JTable saveFormTable = new JTable(data, columnNames);
+        saveFormTable.setEnabled(false);
+        saveFormTable.setPreferredScrollableViewportSize(new Dimension(150, 90));
+        saveFormTable.setFillsViewportHeight(true);
+        saveFormTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        saveFormTable.setDragEnabled(false);
+        JTableHeader head = saveFormTable.getTableHeader();
+        head.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        JScrollPane saveFormPanelSP = new JScrollPane(saveFormTable);
+        saveFormPanelSP.setPreferredSize(saveFormPanelSP.getPreferredSize());
+        //formsPanelSP.setBorder(BorderFactory.createMatteBorder(0, 25, 0, 25, Color.CYAN));
+
+        JLabel jl = new JLabel("Save Unsuccessful! Please fix errors.");
+        JPanel pan = new JPanel();
+        GridLayout gl = new GridLayout(0, 1);
+        pan.setLayout(gl);
+        pan.add(jl);
+        pan.add(saveFormPanelSP);
+        pan.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 25));
+        pan.setPreferredSize(pan.getPreferredSize());
+        JOptionPane.showMessageDialog(null, pan, "Warning",
+                JOptionPane.OK_OPTION);
     }
 
 
@@ -6959,7 +7121,9 @@ public class Main extends JFrame {
     private javax.swing.JButton day7;
     private javax.swing.JButton day8;
     private javax.swing.JButton day9;
-    private org.jdesktop.swingx.JXDatePicker dob;
+    private javax.swing.JComboBox<String> dob_d;
+    private javax.swing.JComboBox<String> dob_m;
+    private javax.swing.JComboBox<String> dob_y;
     private javax.swing.JTextField eSchool;
     private javax.swing.JTextField eYear;
     private javax.swing.JButton editEvent;

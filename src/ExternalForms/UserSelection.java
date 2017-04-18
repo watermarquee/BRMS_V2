@@ -48,17 +48,19 @@ public class UserSelection extends JDialog {
             }
         });
     }
-    public void setLogHandler(LogHandler logHandler){
+
+    public void setLogHandler(LogHandler logHandler) {
         this.logHandler = logHandler;
     }
+
     public void callClass(String adminID) {
         this.adminID = adminID;
 
-        this.setVisible(true);
-        this.main.setEnabled(false);
-
         createUser.setLogHandler(logHandler);
         setViewOfficialsData();
+        
+        this.setVisible(true);
+        this.main.setEnabled(false);
     }
 
     /**
@@ -201,7 +203,7 @@ public class UserSelection extends JDialog {
             //String personName)
 
             createUser.callClassAdd(currentOfficialViewedID, "create");
-            String personName = String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 3)) + " "+ String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 2));
+            String personName = String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 3)) + " " + String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 2));
 
             SQLConnect tc = new SQLConnect();
             SQLConnect tc1;

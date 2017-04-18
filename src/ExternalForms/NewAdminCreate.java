@@ -50,11 +50,11 @@ public class NewAdminCreate extends JDialog {
         
         startDate.setDate(new Date());
         endDate.setDate(new Date());
+
+        main.deactivateAdminOfficials(); 
         
         this.setVisible(true);
         this.main.setEnabled(false);
-        
-        main.deactivateAdminOfficials();
     }
 
     /**

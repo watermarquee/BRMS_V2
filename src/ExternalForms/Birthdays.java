@@ -44,15 +44,14 @@ public class Birthdays extends JDialog {//wala pa na-call sa main
                 enableMainHideThis();
             }
         });
-        
-        UIManager.put("Panel.background", new ColorUIResource(0,102,153 ));
+
+        UIManager.put("Panel.background", new ColorUIResource(0, 102, 153));
     }
 
     public void callClass() {
+        setData();
         this.setVisible(true);
         this.main.setEnabled(false);
-
-        setData();
     }
 
     public void setLogHandler(LogHandler logHandler) {

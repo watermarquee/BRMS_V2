@@ -139,18 +139,18 @@ public class NewEvent extends JDialog {
             storeData();
             JOptionPane.showMessageDialog(this, "Sucessfully Added Event to Calendar!");
             emptyFields();
-            this.setVisible(false);
             enableMainHideThis();
             main.backFromClass("Saved New Event");
             main.viewEventsOnThisDay();
+            this.setVisible(false);
         } else if (callType == 1) {
             updateData();
             JOptionPane.showMessageDialog(this, "Sucessfully Updated Event in Calendar!");
             emptyFields();
-            this.setVisible(false);
             enableMainHideThis();
             main.backFromClass("Updated Event");
             main.viewEventsOnThisDay();
+            this.setVisible(false);
         }
     }
 
@@ -363,9 +363,9 @@ public class NewEvent extends JDialog {
     }//GEN-LAST:event_saveActionPerformed
 
     private void cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelActionPerformed
-        this.setVisible(false);
         emptyFields();
         enableMainHideThis();
+        this.setVisible(false);
     }//GEN-LAST:event_cancelActionPerformed
 
     private void eTitleKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_eTitleKeyReleased

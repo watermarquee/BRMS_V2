@@ -53,10 +53,10 @@ public class OfficialSelection extends JDialog {
         this.offID = officialIdToReplace;
         this.offName = officialReplacedName;
 
+        setViewCitizensData();
+
         this.setVisible(true);
         this.main.setEnabled(false);
-
-        setViewCitizensData();
     }
 
     public void callClass(String postion, String adminID, JTable j) { //ADD
@@ -66,10 +66,10 @@ public class OfficialSelection extends JDialog {
         this.adminID = adminID;
         this.position = postion;
 
+        setViewCitizensData();
+        
         this.setVisible(true);
         this.main.setEnabled(false);
-
-        setViewCitizensData();
     }
 
     public void setHandler(LogHandler logHandler) {

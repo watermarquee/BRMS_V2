@@ -62,6 +62,19 @@ public class SQLConnect {
             disp = false;
         }
     }
+    
+    public void createDBUser(){
+        try {
+            String query = "CREATE USER IF NOT EXISTS 'root2'@'localhost' IDENTIFIED BY 'pass';";
+            st.execute(query);
+            
+            query = "GRANT ALL ON my_db.* TO 'root2'@'localhost';";
+            st.execute(query);
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "CANNOT CREATE USER");
+        }
+    }
 
     public boolean toDispose() {
         return disp;

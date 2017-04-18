@@ -48,10 +48,11 @@ public class SearchPerson extends JDialog {
     public void callClass(String personType, LogHandler logHandler) {
         this.personType = personType;
         this.logHandler = logHandler;
-        this.setVisible(true);
-        this.main.setEnabled(false);
 
         setData();
+        
+        this.setVisible(true);
+        this.main.setEnabled(false);
     }
 
     /**
@@ -263,16 +264,16 @@ public class SearchPerson extends JDialog {
                 connect.closeCon();
                 connect = new SQLConnect();
                 connect.storeTrans(personID);
-                
+
                 connect.closeCon();
                 connect = new SQLConnect();
                 tid = connect.getpTransID(personID);
-                String tempName = String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 2)) +" "+ String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 1));
+                String tempName = String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 2)) + " " + String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 1));
                 logHandler.saveLog("Created New Transaction with -Transaction ID: " + tid + " -Person ID: " + personID + " -Person Name: " + tempName); //Viewed Transaction ID; Person ID, Name	
             } else {
                 tid = connect.getpTransID(personID);
             }
-            
+
             System.out.println("Searched Table. Making a Request with TransID: " + tid + " -> " + String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 2)) + " " + String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 1)));
             main.makeRequest(tid, String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 2)) + " " + String.valueOf(citizens.getValueAt(citizens.getSelectedRow(), 1)));
             enableMainHideThis();

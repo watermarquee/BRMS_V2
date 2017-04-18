@@ -48,23 +48,20 @@ public class CreateUser extends JDialog {
         this.storeMethod = method;
         this.officialID = officialID;
 
-        this.setVisible(true);
-        this.main.setEnabled(false);
-
         title.setText("Create New User");
 
         if (method.equals("update")) {
             placeData();
         }
         save.setEnabled(false);
+
+        this.setVisible(true);
+        this.main.setEnabled(false);
     }
 
     public void callClassEdit(String userID, String method) {
         this.storeMethod = method;
         this.userID = userID;
-
-        this.setVisible(true);
-        this.main.setEnabled(false);
 
         title.setText("Edit User");
 
@@ -73,6 +70,9 @@ public class CreateUser extends JDialog {
         }
 
         save.setEnabled(false);
+
+        this.setVisible(true);
+        this.main.setEnabled(false);
     }
 
     public void setLogHandler(LogHandler logHandler) {
@@ -299,8 +299,8 @@ public class CreateUser extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
-        this.setVisible(false);
         enableMainHideThis();
+        this.setVisible(false);
     }//GEN-LAST:event_backActionPerformed
 
     private void saveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveActionPerformed
@@ -323,8 +323,8 @@ public class CreateUser extends JDialog {
             JOptionPane.showMessageDialog(this, msg);
 
             main.loadUsers();
-            this.setVisible(false);
             enableMainHideThis();
+            this.setVisible(false);
         } else {
             JOptionPane.showMessageDialog(this, "Username Already Taken.");
         }

@@ -124,7 +124,7 @@ public class Browser extends JDialog {
                 k.setDate(new Date());
                 p1.add(k);
                 //**************************************************************
-                
+
                 int choice = JOptionPane.showConfirmDialog(null, p1,
                         "Select Claim Date", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
                 if (choice == JOptionPane.OK_OPTION) {
@@ -172,6 +172,12 @@ public class Browser extends JDialog {
         c = new JButton("Cancel");
 
         ActionListener cancel = (ActionEvent ae) -> {
+            if (wasThereADuplicate) {
+                if (new File(dirPrintables.getAbsolutePath() + "\\" + formName + postFix + ".pdf").renameTo(new File(dirPrintables.getAbsolutePath() + "\\" + formName + ".pdf"))) {
+                    System.out.println("Duplicate Renamed!");
+                }
+            }
+
             //----------//delete form at /templates and /printables
             purgeDirectories();
             disableBrowser();
@@ -206,6 +212,11 @@ public class Browser extends JDialog {
             @Override
             public void windowClosing(WindowEvent e) {
                 //j.navigate(app_path + "\\temp.txt"); //cannot delete file recently navigated cause it's still on use on Acrobat Reader so had to redirect.
+                if (wasThereADuplicate) {
+                    if (new File(dirPrintables.getAbsolutePath() + "\\" + formName + postFix + ".pdf").renameTo(new File(dirPrintables.getAbsolutePath() + "\\" + formName + ".pdf"))) {
+                        System.out.println("Duplicate Renamed!");
+                    }
+                }
                 purgeDirectories();
             }
         });
@@ -233,6 +244,18 @@ public class Browser extends JDialog {
 
         for (File file : dir.listFiles()) {
             if (!file.isDirectory()) {
+                file.delete();
+            }
+        }
+    }
+
+    private void purgeDirectoryButKeepSubDirectoriesWithIf(File dir, String filName) { //deletes files in folder but not subdir's.
+        System.out.println("\n*********************************************");
+        System.out.println("Deleting Files at: " + dir.getAbsolutePath());
+        System.out.println("*********************************************\n");
+
+        for (File file : dir.listFiles()) {
+            if (!file.isDirectory() && !file.getName().equals(filName)) {
                 file.delete();
             }
         }
@@ -273,10 +296,12 @@ public class Browser extends JDialog {
         System.out.println("Navigating to File: " + dirPrintables.getAbsolutePath() + "\\" + (formName = fileName) + ".pdf");
         System.out.println("**********************************************\n");
         if (folderName.equals("printable")) {
+            System.out.println("XXXXXX");
             j.navigate(dirPrintables.getAbsolutePath() + "\\" + (formName = fileName) + ".pdf");
         } else if (folderName.equals("template")) {
             j.navigate(dirTemplates.getAbsolutePath() + "\\" + (formName = fileName) + ".pdf");
         } else {
+            System.out.println("YYYYY");
             j.navigate(app_path + "\\" + (formName = fileName) + ".pdf");
         }
     }
@@ -441,6 +466,20 @@ public class Browser extends JDialog {
         return all_inputs;
     }
 
+    public String checkIfSameNameFileExists(File dir, String fileNameDup) {
+        for (File file : dir.listFiles()) {
+            System.out.println("CHECKING DUPE FOR [" + file.getName() + "] vs [" + fileNameDup + "]");
+            if (file.getName().equals(fileNameDup)) {
+                System.out.println("DUPLICATE FOUND");
+                return "_1"; //place numbered filename, to be able to delete existing file after
+            }
+        }
+        return "";
+    }
+
+    boolean wasThereADuplicate = false;
+    String postFix;
+
     public void setDataToPdf(String fName, String formEntryID) {
         try {
 
@@ -452,7 +491,12 @@ public class Browser extends JDialog {
             String split_inputs[] = all_inputs.split(DELIMITER);
 
             PdfReader pdfTemplate = new PdfReader(dirTemplates.getAbsolutePath() + "\\" + (formName = fName) + ".pdf");
-            FileOutputStream fileOutputStream = new FileOutputStream(dirPrintables.getAbsolutePath() + "\\" + formName + ".pdf");
+
+            //navigate("temp", "x");
+            postFix = checkIfSameNameFileExists(this.dirPrintables, formName + ".pdf");
+            System.out.println("FILENAME TO FETCH: " + formName + postFix + "|");
+
+            FileOutputStream fileOutputStream = new FileOutputStream(dirPrintables.getAbsolutePath() + "\\" + formName + postFix + ".pdf");
             PdfStamper stamper = new PdfStamper(pdfTemplate, fileOutputStream);
             stamper.setFormFlattening(true);
 
@@ -468,8 +512,10 @@ public class Browser extends JDialog {
 
             b.setVisible(false);
             c.setText("Done");
-            j.navigate(dirPrintables.getAbsolutePath() + "\\" + formName + ".pdf");
-            System.out.println(dirPrintables.getAbsolutePath() + "\\" + formName + ".pdf");
+            j.navigate(dirPrintables.getAbsolutePath() + "\\" + formName + postFix + ".pdf");
+            this.setVisible(true);
+            System.out.println(dirPrintables.getAbsolutePath() + "\\" + formName + postFix + ".pdf");
+
         } catch (IOException | DocumentException ex) {
             Logger.getLogger(Browser.class.getName()).log(Level.SEVERE, null, ex);
         }

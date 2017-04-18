@@ -27,7 +27,12 @@ import javax.swing.JOptionPane;
 public class Network extends javax.swing.JDialog {
 
     SQLConnect connect;
-    
+    private static final String IPADDRESS_PATTERN
+            = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+            + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
     public Network(LogIn log) {
         super(log);
         initComponents();
@@ -103,7 +108,13 @@ public class Network extends javax.swing.JDialog {
                 }
                 x++;
             }
-
+            
+            if (hasInputs()) {
+                saveButton.setEnabled(true);
+            } else {
+                saveButton.setEnabled(false);
+            }
+            
             setVisible(true);
 
         } catch (FileNotFoundException ex) {
@@ -118,13 +129,19 @@ public class Network extends javax.swing.JDialog {
             }
         }
     }
-    
-    public void check(){
+
+    public void check() {
         connect = new SQLConnect();
-        if(connect.toDispose()){
+        if (connect.toDispose()) {
             JOptionPane.showMessageDialog(this, "Configuration successful!");
             dispose();
         }
+    }
+
+    public boolean hasInputs() {
+        return ipField.getText().length() > 0
+                && dbName.getText().length() > 0
+                && uName.getText().length() > 0;
     }
 
     /**
@@ -186,6 +203,24 @@ public class Network extends javax.swing.JDialog {
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        ipField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                ipFieldKeyReleased(evt);
+            }
+        });
+
+        dbName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                dbNameKeyReleased(evt);
+            }
+        });
+
+        uName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                uNameKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -305,13 +340,37 @@ public class Network extends javax.swing.JDialog {
         } else {
             JOptionPane.showMessageDialog(this, "All Forms Must Not Be Empty!");
         }
-        
+
         check();
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void ipFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ipFieldKeyReleased
+        if (hasInputs()) {
+            saveButton.setEnabled(true);
+        } else {
+            saveButton.setEnabled(false);
+        }
+    }//GEN-LAST:event_ipFieldKeyReleased
+
+    private void dbNameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dbNameKeyReleased
+        if (hasInputs()) {
+            saveButton.setEnabled(true);
+        } else {
+            saveButton.setEnabled(false);
+        }
+    }//GEN-LAST:event_dbNameKeyReleased
+
+    private void uNameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_uNameKeyReleased
+        if (hasInputs()) {
+            saveButton.setEnabled(true);
+        } else {
+            saveButton.setEnabled(false);
+        }
+    }//GEN-LAST:event_uNameKeyReleased
 
 //    /**
 //     * @param args the command line arguments

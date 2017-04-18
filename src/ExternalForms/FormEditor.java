@@ -54,7 +54,7 @@ public class FormEditor extends JDialog {
                 enableMainHideThis();
             }
         });
-        
+
         formVarCount.setVisible(false);
         jLabel3.setVisible(false);
     }
@@ -66,10 +66,10 @@ public class FormEditor extends JDialog {
         this.userID = userID;
         title.setText(callType + " New Form");
 
-        this.setVisible(true);
         this.main.setEnabled(false);
         this.browse.setEnabled(true);
         this.formFile.setEnabled(true);
+        this.setVisible(true);
     }
 
     public void callClass(String formID, String fName, String fVar, String stat, String userID) {
@@ -86,13 +86,13 @@ public class FormEditor extends JDialog {
         title.setText(callType + " Existing Form");
         combo1.setSelectedItem(avail);
 
-        this.setVisible(true);
         this.main.setEnabled(false);
         this.formFile.setEnabled(false);
         this.browse.setEnabled(false);
         formVarCount.setEnabled(false);
 
         setData();
+        this.setVisible(true);
     }
 
     public void setLogHandler(LogHandler l) {
@@ -336,10 +336,10 @@ public class FormEditor extends JDialog {
     }//GEN-LAST:event_formFileActionPerformed
 
     public void enableMainHideThis() {
-        main.setEnabled(true);
-        main.setVisible(true);
         purgeDirectoryButKeepSubDirectories();
         emptyFields();
+        main.setEnabled(true);
+        main.setVisible(true);
         dispose();
     }
 

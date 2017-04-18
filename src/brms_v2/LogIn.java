@@ -79,11 +79,12 @@ public final class LogIn extends javax.swing.JFrame {
 
             }
         });
-        
+
+        logInButton.setEnabled(false);
         checkReportsFolder();
 
     }
-    
+
     public void checkReportsFolder() {
         //get file path
         CodeSource codeSource = LogIn.class.getProtectionDomain().getCodeSource();
@@ -106,7 +107,7 @@ public final class LogIn extends javax.swing.JFrame {
                 System.out.println("Failed to create directory!");
             }
         }
-        
+
         //create folder in app path
         File file2 = new File(jarDir + "\\printables");
         if (!file2.exists()) {
@@ -117,16 +118,18 @@ public final class LogIn extends javax.swing.JFrame {
             }
         }
     }
-    
 
     public void callClass() {
-        this.setVisible(true);
         userField.setForeground(Color.decode("0x8C8C8C"));
         passField.setForeground(Color.decode("0x8C8C8C"));
         userField.setText("Username");
         passField.setText("Password");
         focused1 = false;
         focused2 = false;
+        logInButton.setEnabled(false);
+
+        this.setVisible(true);
+        this.setEnabled(true);
     }
 
     /**
@@ -151,6 +154,11 @@ public final class LogIn extends javax.swing.JFrame {
                 userFieldActionPerformed(evt);
             }
         });
+        userField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                userFieldKeyReleased(evt);
+            }
+        });
 
         logInButton.setText("Log In");
         logInButton.addActionListener(new java.awt.event.ActionListener() {
@@ -160,6 +168,11 @@ public final class LogIn extends javax.swing.JFrame {
         });
 
         passField.setText("password");
+        passField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                passFieldKeyReleased(evt);
+            }
+        });
 
         jButton1.setText("Advanced Options");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -184,7 +197,7 @@ public final class LogIn extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(logInButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(132, 132, 132))))
+                        .addGap(114, 114, 114))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -194,7 +207,7 @@ public final class LogIn extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(passField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(logInButton, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(logInButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18))
@@ -204,7 +217,7 @@ public final class LogIn extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logInButtonActionPerformed
-        
+
         connect = new SQLConnect();
         if (focused1 && focused2) {
             username = userField.getText();
@@ -215,7 +228,7 @@ public final class LogIn extends javax.swing.JFrame {
                 connect.closeCon();
                 connect = new SQLConnect();
                 ResultSet rs = connect.getUser(username, password);
-                
+
                 try {
                     while (rs.next()) {
                         if (rs.getString("username").equals(username) && rs.getString("password").equals(password) && rs.getString("status").equals("active")) {
@@ -244,12 +257,29 @@ public final class LogIn extends javax.swing.JFrame {
     }//GEN-LAST:event_logInButtonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       network.callClass();
+        network.callClass();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void userFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_userFieldActionPerformed
+
+    private void userFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_userFieldKeyReleased
+        if ((this.userField.getText().length() > 0) && focused2 && (this.passField.getText().length() > 0)) {
+            //if naay text sa userfield && na-click na ang password field which would mean na naerase na ang default text
+            logInButton.setEnabled(true);
+        } else {
+            logInButton.setEnabled(false);
+        }
+    }//GEN-LAST:event_userFieldKeyReleased
+
+    private void passFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_passFieldKeyReleased
+        if (focused2 && (this.passField.getText().length() > 0)) {
+            logInButton.setEnabled(true);
+        } else {
+            logInButton.setEnabled(false);
+        }
+    }//GEN-LAST:event_passFieldKeyReleased
 
     public void enableMainHideThis() {
         main.setEnabled(true);

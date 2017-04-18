@@ -43,10 +43,10 @@ public class Claimables extends JDialog {//wala pa na-call sa main
     }
 
     public void callClass() {
+        setData();
         this.setVisible(true);
         this.main.setEnabled(false);
 
-        setData();
     }
 
     public void setLogHandler(LogHandler logHandler) {
@@ -76,12 +76,12 @@ public class Claimables extends JDialog {//wala pa na-call sa main
             for (int x = 0; rs.next(); x++) {
                 tID = String.valueOf(rs.getInt("transID"));
                 fID = String.valueOf(rs.getInt("formID"));
-                
+
                 //connect.closeCon();
                 connect = new SQLConnect();
 
                 pID = String.valueOf(connect.getPersonIDViaTransID(tID));
-                
+
                 //connect.closeCon();
                 connect = new SQLConnect();
 
@@ -90,7 +90,7 @@ public class Claimables extends JDialog {//wala pa na-call sa main
                 if (person.next()) {
                     personName = person.getString("fname") + " " + person.getString("lname");
                 }
-                
+
                 //connect.closeCon();
                 connect = new SQLConnect();
 
@@ -99,10 +99,8 @@ public class Claimables extends JDialog {//wala pa na-call sa main
                 if (form.next()) {
                     formName = form.getString("formName");
                 }
-                
-                model.insertRow(x, new String[]{tID
-                        , personName
-                        , formName});
+
+                model.insertRow(x, new String[]{tID, personName, formName});
             }
 
         } catch (SQLException ex) {
