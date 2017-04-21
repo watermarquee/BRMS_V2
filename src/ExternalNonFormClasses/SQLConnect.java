@@ -51,9 +51,9 @@ public class SQLConnect {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             //change user and password in last two params below
-            //con = DriverManager.getConnection("jdbc:mysql://localhost:3306/brgydb2", "root", "");
-            System.out.println("jdbc:mysql://" + ip + ":3306/" + db + "," + uname + "," + pword);
-            con = DriverManager.getConnection("jdbc:mysql://" + ip + ":3306/" + db, uname, pword);
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/brgydb2", "root", "");
+//            System.out.println("jdbc:mysql://" + ip + ":3306/" + db + "," + uname + "," + pword);
+//            con = DriverManager.getConnection("jdbc:mysql://" + ip + ":3306/" + db, uname, pword);
             st = con.createStatement();
 
         } catch (ClassNotFoundException | SQLException ex) {
@@ -62,12 +62,12 @@ public class SQLConnect {
             disp = false;
         }
     }
-    
-    public void createDBUser(){
+
+    public void createDBUser() {
         try {
             String query = "CREATE USER IF NOT EXISTS 'root2'@'localhost' IDENTIFIED BY 'pass';";
             st.execute(query);
-            
+
             query = "GRANT ALL ON my_db.* TO 'root2'@'localhost';";
             st.execute(query);
 
@@ -678,8 +678,8 @@ public class SQLConnect {
             System.out.println("" + query);
             ResultSet rz = st.executeQuery(query);
             while (rz.next()) {
-                data.add(rz.getString("month")+" "+rz.getString("day")+", "+rz.getString("year"));
-                System.out.println(rz.getString("month")+" "+rz.getString("day")+", "+rz.getString("year"));
+                data.add(rz.getString("month") + " " + rz.getString("day") + ", " + rz.getString("year"));
+                System.out.println(rz.getString("month") + " " + rz.getString("day") + ", " + rz.getString("year"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(SQLConnect.class.getName()).log(Level.SEVERE, null, ex);
@@ -904,6 +904,7 @@ public class SQLConnect {
             String dateClaimed = sdf.format(new Date());
 
             String query = "INSERT INTO log(userID, action, date_created, time_created) VALUES(\"" + userID + "\",\"" + action + "\",\"" + dateClaimed + "\",\"" + timeClaimed + "\")";
+            System.out.println(query);
             st.executeUpdate(query);
         } catch (SQLException ex) {
             Logger.getLogger(SQLConnect.class.getName()).log(Level.SEVERE, null, ex);
@@ -1026,7 +1027,7 @@ public class SQLConnect {
         String jarDir = jarFile.getParentFile().getPath();
         app_path = jarDir;
 
-        System.out.println("PATH: " + jarDir);
+        //System.out.println("PATH: " + jarDir);
 
         //create folder in app path
         File file3 = new File(jarDir + "\\CONFIG.txt");
@@ -1055,7 +1056,7 @@ public class SQLConnect {
             int x = 0;
             // Read the file line by line starting from the second line
             while ((line = fileReader.readLine()) != null) {
-                System.out.println(line);
+                //System.out.println(line);
                 switch (x) {
                     case 0:
                         ip = line;

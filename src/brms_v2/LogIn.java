@@ -11,6 +11,7 @@ import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 import java.awt.Color;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
@@ -80,6 +81,7 @@ public final class LogIn extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setVisible(false);
         logInButton.setEnabled(false);
         checkReportsFolder();
 
@@ -127,9 +129,48 @@ public final class LogIn extends javax.swing.JFrame {
         focused1 = false;
         focused2 = false;
         logInButton.setEnabled(false);
-
+        jButton1.setVisible(false);
         this.setVisible(true);
         this.setEnabled(true);
+    }
+
+    public void saveFunc() {
+        connect = new SQLConnect();
+        if (focused1 && focused2) {
+            username = userField.getText();
+            password = passField.getText();
+
+            if (username != null && !username.equals("") && password != null && !password.equals("")) {
+                boolean proceed = false;
+                connect.closeCon();
+                connect = new SQLConnect();
+                ResultSet rs = connect.getUser(username, password);
+
+                try {
+                    while (rs.next()) {
+                        if (rs.getString("username").equals(username) && rs.getString("password").equals(password) && rs.getString("status").equals("active")) {
+                            userID = String.valueOf(rs.getString("userID"));
+                            enableMainHideThis();
+                            main.callClass(username, password, userID, rs.getString("adminType"));
+                            proceed = true;
+                            break;
+                        }
+                    }
+
+                    if (!proceed) {
+                        JOptionPane.showMessageDialog(null, "Username and/or Password Invalid!");
+                    }
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Username and/or Password Invalid!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Username and/or Password Invalid!");
+        }
+
     }
 
     /**
@@ -175,6 +216,7 @@ public final class LogIn extends javax.swing.JFrame {
         });
 
         jButton1.setText("Advanced Options");
+        jButton1.setEnabled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -194,10 +236,11 @@ public final class LogIn extends javax.swing.JFrame {
                             .addComponent(passField, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE))
                         .addGap(85, 85, 85))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(logInButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(114, 114, 114))))
+                        .addComponent(jButton1)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(logInButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(133, 133, 133))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,52 +251,16 @@ public final class LogIn extends javax.swing.JFrame {
                 .addComponent(passField, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(logInButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void logInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logInButtonActionPerformed
-
-        connect = new SQLConnect();
-        if (focused1 && focused2) {
-            username = userField.getText();
-            password = passField.getText();
-
-            if (username != null && !username.equals("") && password != null && !password.equals("")) {
-                boolean proceed = false;
-                connect.closeCon();
-                connect = new SQLConnect();
-                ResultSet rs = connect.getUser(username, password);
-
-                try {
-                    while (rs.next()) {
-                        if (rs.getString("username").equals(username) && rs.getString("password").equals(password) && rs.getString("status").equals("active")) {
-                            userID = String.valueOf(rs.getString("userID"));
-                            enableMainHideThis();
-                            main.callClass(username, password, userID, rs.getString("adminType"));
-                            proceed = true;
-                            break;
-                        }
-                    }
-
-                    if (!proceed) {
-                        JOptionPane.showMessageDialog(null, "Username and/or Password Invalid!");
-                    }
-
-                } catch (SQLException ex) {
-                    Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Username and/or Password Invalid!");
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Username and/or Password Invalid!");
-        }
-
+        saveFunc();
     }//GEN-LAST:event_logInButtonActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -265,7 +272,9 @@ public final class LogIn extends javax.swing.JFrame {
     }//GEN-LAST:event_userFieldActionPerformed
 
     private void userFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_userFieldKeyReleased
-        if ((this.userField.getText().length() > 0) && focused2 && (this.passField.getText().length() > 0)) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            saveFunc();
+        } else if ((this.userField.getText().length() > 0) && focused2 && (this.passField.getText().length() > 0)) {
             //if naay text sa userfield && na-click na ang password field which would mean na naerase na ang default text
             logInButton.setEnabled(true);
         } else {
@@ -274,7 +283,9 @@ public final class LogIn extends javax.swing.JFrame {
     }//GEN-LAST:event_userFieldKeyReleased
 
     private void passFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_passFieldKeyReleased
-        if (focused2 && (this.passField.getText().length() > 0)) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            saveFunc();
+        } else if (focused2 && (this.passField.getText().length() > 0)) {
             logInButton.setEnabled(true);
         } else {
             logInButton.setEnabled(false);

@@ -31,6 +31,10 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -281,6 +285,8 @@ public class Main extends JFrame {
 
         });
 
+        age.setText("0");
+
         //dob days
         for (int x = 1; x <= 31; x++) {
             dob_d.addItem("" + x);
@@ -301,7 +307,43 @@ public class Main extends JFrame {
         }
 
         dob_y.setSelectedItem(yearStr);
+//SHALL RETURN
+        dob_m.addItemListener((ItemEvent ie) -> {
+            updateProfileAge();
+        });
+        dob_d.addItemListener((ItemEvent ie) -> {
+            updateProfileAge();
+        });
+        dob_y.addItemListener((ItemEvent ie) -> {
+            updateProfileAge();
+        });
+        updateProfileAge();
 
+    }
+
+    public void updateProfileAge() {
+        Calendar now = Calendar.getInstance();
+        Calendar dob = Calendar.getInstance();
+        Date d = new GregorianCalendar(Integer.parseInt(dob_y.getSelectedItem().toString()), (dob_m.getSelectedIndex()), Integer.parseInt(dob_d.getSelectedItem().toString())).getTime();
+        dob.setTime(d);
+//        if (dob.after(now)) {
+//            throw new IllegalArgumentException("Can't be born in the future");
+//        }
+        int year1 = now.get(Calendar.YEAR);
+        int year2 = dob.get(Calendar.YEAR);
+        int ageNew = year1 - year2;
+        int month1 = now.get(Calendar.MONTH);
+        int month2 = dob.get(Calendar.MONTH);
+        if (month2 > month1) {
+            ageNew--;
+        } else if (month1 == month2) {
+            int day1 = now.get(Calendar.DAY_OF_MONTH);
+            int day2 = dob.get(Calendar.DAY_OF_MONTH);
+            if (day2 > day1) {
+                ageNew--;
+            }
+        }
+        age.setText("" + ageNew);
     }
 
 //    public void logOutHideThis() {
@@ -545,6 +587,7 @@ public class Main extends JFrame {
         dateSelected = new javax.swing.JLabel();
         addNewEvent = new javax.swing.JButton();
         editEvent = new javax.swing.JButton();
+        deleteEvent = new javax.swing.JButton();
         transactionsPanel = new javax.swing.JPanel();
         t_transactionsScrollPane1 = new javax.swing.JScrollPane();
         transactionTable = new javax.swing.JTable();
@@ -935,6 +978,8 @@ public class Main extends JFrame {
         jLabel17.setText("Precint Number:");
 
         jLabel6.setText("Age:");
+
+        age.setEditable(false);
 
         jLabel41.setText("Extension:");
 
@@ -2899,15 +2944,27 @@ public class Main extends JFrame {
             }
         });
 
+        deleteEvent.setBackground(new java.awt.Color(189, 195, 198));
+        deleteEvent.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        deleteEvent.setForeground(new java.awt.Color(0, 102, 153));
+        deleteEvent.setText("Delete Event");
+        deleteEvent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteEventActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout eventPanelLayout = new javax.swing.GroupLayout(eventPanel);
         eventPanel.setLayout(eventPanelLayout);
         eventPanelLayout.setHorizontalGroup(
             eventPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(eventPanelLayout.createSequentialGroup()
-                .addContainerGap(619, Short.MAX_VALUE)
+                .addContainerGap(474, Short.MAX_VALUE)
                 .addComponent(addNewEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(editEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(deleteEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(backToCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -2926,7 +2983,8 @@ public class Main extends JFrame {
                 .addGroup(eventPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(backToCalendar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addNewEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(editEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(deleteEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
             .addGroup(eventPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(eventPanelLayout.createSequentialGroup()
@@ -3616,7 +3674,7 @@ public class Main extends JFrame {
         home_viewBday.setBackground(new java.awt.Color(189, 195, 198));
         home_viewBday.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         home_viewBday.setForeground(new java.awt.Color(0, 102, 153));
-        home_viewBday.setText("Birthdays ");
+        home_viewBday.setText("Events Today");
         home_viewBday.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 home_viewBdayActionPerformed(evt);
@@ -4990,19 +5048,23 @@ public class Main extends JFrame {
     private void viewDayEventActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewDayEventActionPerformed
         hideAllPanels();
         eventPanel.setVisible(true);
-        viewEventsOnThisDay();
+        viewEventsOnThisDay(0);
     }//GEN-LAST:event_viewDayEventActionPerformed
-
+    int eventsCallerType = 0;
     private void backToCalendarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backToCalendarActionPerformed
         hideAllPanels();
-        calendarPanel.setVisible(true);
+        if (eventsCallerType == 0) { //calendar
+            calendarPanel.setVisible(true);
+        } else if (eventsCallerType == 1) { //home
+            homePanel.setVisible(true);
+        }
     }//GEN-LAST:event_backToCalendarActionPerformed
 
     private void addNewEventActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNewEventActionPerformed
         if (logged_userType.equals("Level 1")) {
             JOptionPane.showMessageDialog(null, "You do not have enough Administrative Priveleges to use the function!");
         } else {
-            nev.setDate(cal.getMonthSelected(), calendarDaySelected, cal.getYearSelected());
+            nev.setDate(cal.getMonthSelected(), calendarDaySelected, cal.getYearSelected(), eventsCallerType);
             nev.setVisible(true);
         }
     }//GEN-LAST:event_addNewEventActionPerformed
@@ -5338,11 +5400,14 @@ public class Main extends JFrame {
     }//GEN-LAST:event_home_viewClaimablesActionPerformed
 
     private void home_viewBdayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_home_viewBdayActionPerformed
-        birthday.callClass();
+        //birthday.callClass();
+        hideAllPanels();
+        eventPanel.setVisible(true);
+        viewEventsOnThisDay(1);
     }//GEN-LAST:event_home_viewBdayActionPerformed
 
     private void home_userManualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_home_userManualActionPerformed
-        // TODO add your handling code here:
+        //USERMANUAL
     }//GEN-LAST:event_home_userManualActionPerformed
 
     private void home_aboutBRMSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_home_aboutBRMSActionPerformed
@@ -5540,7 +5605,7 @@ public class Main extends JFrame {
         if (logged_userType.equals("Level 1")) {
             JOptionPane.showMessageDialog(null, "You do not have enough Administrative Priveleges to use the function!");
         } else if (eventsTable.getSelectedRow() >= 0) {
-            nev.editEvent(Integer.parseInt(eventsTable.getValueAt(eventsTable.getSelectedRow(), 0).toString()));
+            nev.editEvent(Integer.parseInt(eventsTable.getValueAt(eventsTable.getSelectedRow(), 0).toString()), eventsCallerType);
             nev.setVisible(true);
         }
     }//GEN-LAST:event_editEventActionPerformed
@@ -5548,6 +5613,21 @@ public class Main extends JFrame {
     private void mfnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mfnameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_mfnameActionPerformed
+
+    private void deleteEventActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteEventActionPerformed
+        if (logged_userType.equals("Level 1")) {
+            JOptionPane.showMessageDialog(null, "You do not have enough Administrative Priveleges to use the function!");
+        } else if (eventsTable.getSelectedRow() >= 0) {
+            JPanel jp = new JPanel();
+            JLabel jt = new JLabel("Are you sure you wish to delete event?");
+            jp.add(jt);
+            int result = JOptionPane.showConfirmDialog(null, jp,
+                    "Confirm Delete", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                nev.deleteEvent(eventsTable.getValueAt(eventsTable.getSelectedRow(), 0).toString(), eventsCallerType);
+            }
+        }
+    }//GEN-LAST:event_deleteEventActionPerformed
 
     boolean prevFlag = false; //controls the prompt for prev and next buttons in officials
     boolean nextFlag = false;
@@ -6149,7 +6229,7 @@ public class Main extends JFrame {
         dob_y.setSelectedItem(yearStr);
 
         pob.setText("");
-        age.setText("");
+        //age.setText("");
         religion.setText("");
         address.setText("");
         telNum.setText("");
@@ -6312,7 +6392,7 @@ public class Main extends JFrame {
                     ResultSet xd = connect.getLatestEventID();
                     connect = new SQLConnect();
                     ResultSet temp2 = connect.getEvent(String.valueOf(xd.getInt("eventID")));
-                    logHandler.saveLog("Deleted Calendar Event with -Event ID: " + xd.getInt("eventID") + " -Event Name: " + temp2.getString("title"));
+                    logHandler.saveLog("Deleted Calendar Event");
 
                 } catch (SQLException ex) {
                     Logger.getLogger(Main.class
@@ -6733,10 +6813,26 @@ public class Main extends JFrame {
         calendarDaySelected = i;
     }
 
-    public void viewEventsOnThisDay() {
+    public void viewEventsOnThisDay(int callType) {
         connect.closeCon();
         connect = new SQLConnect();
-        dateSelected.setText(cal.getMonthSelected() + " " + calendarDaySelected);
+
+        this.eventsCallerType = callType;
+
+        String selectedMonth = "", selectedDay = "";
+
+        if (callType == 0) { //calendar
+            selectedMonth = cal.getMonthSelected();
+            selectedDay = calendarDaySelected;
+        } else if (callType == 1) { //home
+            Calendar calD = Calendar.getInstance();
+            String[] months = {"January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"};
+            selectedMonth = months[calD.get(Calendar.MONTH)];
+            selectedDay = "" + calD.get(Calendar.DAY_OF_MONTH);
+        }
+
+        dateSelected.setText(selectedMonth + " " + selectedDay);
         //logHandler.saveLog("Viewed Events on Date: " + dateSelected.getText());
 
         ResultSet rs = connect.getAllEvents(cal.getMonthSelected(), calendarDaySelected);
@@ -7113,6 +7209,7 @@ public class Main extends JFrame {
     private javax.swing.JButton day7;
     private javax.swing.JButton day8;
     private javax.swing.JButton day9;
+    private javax.swing.JButton deleteEvent;
     private javax.swing.JComboBox<String> dob_d;
     private javax.swing.JComboBox<String> dob_m;
     private javax.swing.JComboBox<String> dob_y;

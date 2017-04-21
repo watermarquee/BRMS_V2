@@ -28,7 +28,7 @@ public class NewEvent extends JDialog {
 
     String month, day, year, user;
     Main main;
-    int callType, eventID;
+    int callType, eventID, eventsCallerType;
     SQLConnect connect;
 
     public NewEvent(Main main) {
@@ -52,14 +52,14 @@ public class NewEvent extends JDialog {
         this.user = userId;
     }
 
-    public void setDate(String month, String day, String year) { //callClass
+    public void setDate(String month, String day, String year, int eventsCallerType) { //callClass
         title.setText("Add Event");
         save.setEnabled(false);
         this.callType = 0;
         this.month = month;
         this.day = day;
         this.year = year;
-
+        this.eventsCallerType = eventsCallerType;
         main.setEnabled(false);
     }
 
@@ -71,13 +71,14 @@ public class NewEvent extends JDialog {
         connect.updateEvent(String.valueOf(eventID), eTitle.getText(), eVenue.getText(), eTime.getText(), eRemarks.getText());
     }
 
-    public void deleteEvent(String eventID) {
+    public void deleteEvent(String eventID, int eventsCallerType) {
         connect.deleteEvent(eventID);
         main.backFromClass("Deleted Event");
-        main.viewEventsOnThisDay();
+        main.viewEventsOnThisDay(eventsCallerType);
     }
 
-    public void editEvent(int eventID) {
+    public void editEvent(int eventID, int eventsCallerType) {
+        this.eventsCallerType = eventsCallerType;
         save.setEnabled(false);
         title.setText("Edit Event");
         this.callType = 1;
@@ -141,7 +142,7 @@ public class NewEvent extends JDialog {
             emptyFields();
             enableMainHideThis();
             main.backFromClass("Saved New Event");
-            main.viewEventsOnThisDay();
+            main.viewEventsOnThisDay(eventsCallerType);
             this.setVisible(false);
         } else if (callType == 1) {
             updateData();
@@ -149,7 +150,7 @@ public class NewEvent extends JDialog {
             emptyFields();
             enableMainHideThis();
             main.backFromClass("Updated Event");
-            main.viewEventsOnThisDay();
+            main.viewEventsOnThisDay(eventsCallerType);
             this.setVisible(false);
         }
     }
